@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 
 contract MainContract {
-    address public owner;
+    address private owner;
     struct doctorDetails {
         bytes32 profileHash;
         bytes32 verifiableClaimHash;
@@ -71,7 +71,7 @@ contract MainContract {
 
     event registerDoctorEvent(string hash, string link, address doctor);
 
-    function stringToBytes32(string memory source) public returns (bytes32 result) {
+    function stringToBytes32(string memory source) private returns (bytes32 result) {
           bytes memory tempEmptyStringTest = bytes(source);
           if (tempEmptyStringTest.length == 0) {
               return 0x0;

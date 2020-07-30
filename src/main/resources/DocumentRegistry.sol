@@ -48,7 +48,7 @@ contract DocumentRegistry {
    */
   event Notarized(address indexed _signer, bytes32 _documentHash);
 
-  function stringToBytes32(string memory source) public returns (bytes32 result) {
+  function stringToBytes32(string memory source) private returns (bytes32 result) {
       bytes memory tempEmptyStringTest = bytes(source);
       if (tempEmptyStringTest.length == 0) {
           return 0x0;
