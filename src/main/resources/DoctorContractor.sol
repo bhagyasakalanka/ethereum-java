@@ -79,4 +79,14 @@ contract DoctorContract {
         require(owner== msg.sender || recordMapping[recordNumber].patient == msg.sender, "you do not have permission" );
         return recordMapping[recordNumber].isActive == true;
     }
+    function isChallengeSet(uint recordNumber) public view returns(bool){
+        require(owner == msg.sender, "you do not have permission");
+        require(recordMapping[recordNumber].isActive == true, "record is closed");
+        return bytes(recordMapping[recordNumber].challenge).length > 0;
+    }
+    function isResponseSet(uint recordNumber) public view returns(bool){
+            require(recordMapping[recordNumber] == msg.sender, "you do not have permission");
+            require(recordMapping[recordNumber].isActive == true, "record is closed");
+            return bytes(recordMapping[recordNumber].response).length > 0;
+        }
 }

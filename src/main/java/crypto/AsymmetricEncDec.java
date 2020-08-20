@@ -7,10 +7,21 @@ import java.security.*;
 import java.util.Base64;
 
 public class AsymmetricEncDec {
+    private static AsymmetricEncDec instance;
     private AsymmetricEncDec() {
 
     }
-    public static String encryptString(String text, Key key) throws InvalidKeyException, UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException {
+    public static AsymmetricEncDec getInstance(){
+        if(instance == null){
+            synchronized (AsymmetricEncDec.class){
+                if(instance == null) {
+                    instance = new AsymmetricEncDec();
+                }
+            }
+        }
+        return instance;
+    }
+    public String encryptString(String text, Key key) throws InvalidKeyException, UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException {
         KeyGenerator generator = KeyGenerator.getInstance("AES");
         generator.init(128);
         SecretKey secretKey = generator.generateKey();
@@ -23,7 +34,7 @@ public class AsymmetricEncDec {
         System.out.println("encrypted: "+cipherSecret+"_"+cipherText);
         return cipherSecret+"_"+cipherText;
     }
-    public static String decryptString(String cipherText, Key key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException {
+    public String decryptString(String cipherText, Key key) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException {
         String[] msg = cipherText.split("_");
         System.out.println("cipherText: "+cipherText);
         String cipherT = msg[1];

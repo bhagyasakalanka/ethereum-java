@@ -11,10 +11,21 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public  class KeyHandler {
+    private static KeyHandler instance;
     private KeyHandler(){
 
     }
-    public static void EncodedKeyPairWriter(KeyPair keyPair, String privateKeyLocation, String publicKeyLocation) throws IOException {
+    public static KeyHandler getInstance(){
+        if(instance == null){
+            synchronized (KeyHandler.class){
+                if(instance == null){
+                    instance = new KeyHandler();
+                }
+            }
+        }
+        return instance;
+    }
+    public void EncodedKeyPairWriter(KeyPair keyPair, String privateKeyLocation, String publicKeyLocation) throws IOException {
         FileOutputStream pri_out = new FileOutputStream(privateKeyLocation+".key");
         pri_out.write(keyPair.getPrivate().getEncoded());
         pri_out.close();
@@ -22,7 +33,7 @@ public  class KeyHandler {
         pub_out.write(keyPair.getPublic().getEncoded());
         pub_out.close();
     }
-    public static PublicKey loadEncodedRSAPublicKey(String publicKeyLocation) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public PublicKey loadEncodedRSAPublicKey(String publicKeyLocation) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         Path path = Paths.get(publicKeyLocation);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         byte[] bytes = Files.readAllBytes(path);
@@ -30,7 +41,7 @@ public  class KeyHandler {
         PublicKey publicKey = kf.generatePublic(ks);
         return publicKey;
     }
-    public static PrivateKey loadEncodedRSAPrivateKey(String privateKeyLocation) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public PrivateKey loadEncodedRSAPrivateKey(String privateKeyLocation) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
         //private
         Path path = Paths.get(privateKeyLocation);
         byte[] bytes = Files.readAllBytes(path);
@@ -40,7 +51,7 @@ public  class KeyHandler {
         return  privateKey;
     }
 
-    public static void writePlainKeyPair(KeyPair keyPair, String privateKeyLocation, String publicKeyLocation) throws IOException {
+    public void writePlainKeyPair(KeyPair keyPair, String privateKeyLocation, String publicKeyLocation) throws IOException {
         Base64.Encoder encoder = Base64.getEncoder();
         Writer out = new FileWriter(privateKeyLocation+"pt.key");
         out.write("-----BEGIN RSA PRIVATE KEY-----\n");
@@ -54,7 +65,7 @@ public  class KeyHandler {
         out.write("\n------END RSA PUBLIC KEY-----\n");
         out.close();
     }
-    public static PublicKey loadRSAPublicFromPlainText(String publicKeyLocation) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public PublicKey loadRSAPublicFromPlainText(String publicKeyLocation) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         File file = new File(publicKeyLocation);
         BufferedReader br = new BufferedReader(new FileReader(file));
         String publicKeyText = "";
@@ -71,7 +82,7 @@ public  class KeyHandler {
         PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
         return publicKey;
     }
-    public static PrivateKey loadRSAPrivateFromPlainText(String privateKeyLocation) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public PrivateKey loadRSAPrivateFromPlainText(String privateKeyLocation) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         File file = new File(privateKeyLocation);
         BufferedReader br = new BufferedReader(new FileReader(file));
         String privateKeyText = "";
